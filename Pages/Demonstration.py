@@ -1,5 +1,5 @@
 import streamlit as st
-from app2 import generate_signed_url
+from backend import generate_signed_url
 
 def demonstration_page():
     st.title("Demonstration Page")

@@ -2,7 +2,6 @@ import streamlit as st
 from app2 import generate_signed_url
 
 def meta_data_page():
-    st.set_page_config(page_title="MultiClassClassificationInput App", layout="wide")
     st.title("Meta Data")
     st.write("**Key Insights and Analytics from the Application Backend**")
     col1, col2 = st.columns([1, 2])

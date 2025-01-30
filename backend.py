@@ -14,10 +14,29 @@ from google.cloud import storage
 import io
 import json
 from google.oauth2 import service_account
+from google.cloud import storage
+from datetime import timedelta
+from google.oauth2 import service_account
 
-# Load the service account key from Streamlit Secrets
 secrets = st.secrets["gcp_service_account"]
 credentials = service_account.Credentials.from_service_account_info(secrets)
+
+def generate_signed_url(blob_name):
+    """Generates a signed URL to access a file in GCS."""
+    try:
+        bucket_name = "chickpea-transcriptome"  # Replace with your bucket name
+        client = storage.Client(credentials=credentials)
+        bucket = client.get_bucket(bucket_name)
+        blob = bucket.blob(blob_name)
+        if not blob.exists():
+            print(f"File {blob_name} does not exist in bucket {bucket_name}")  # Debugging
+            return None
+        url = blob.generate_signed_url(expiration=timedelta(hours=1), method='GET')
+        print(f"Generated signed URL for {blob_name}: {url}")  # Debugging
+        return url
+    except Exception as e:
+        print(f"Error generating signed URL for {blob_name}: {e}")  # Debugging
+        return None
 
 # Initialize the Google Cloud Storage client
 client = storage.Client(credentials=credentials)

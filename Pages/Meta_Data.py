@@ -1,5 +1,5 @@
 import streamlit as st
-from app import generate_signed_url
+from app2 import generate_signed_url
 
 def meta_data_page():
     st.title("Meta Data")

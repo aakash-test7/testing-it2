@@ -1,4 +1,5 @@
 import streamlit as st
+st.set_page_config(page_title="MultiClassClassificationInput App", layout="wide")
 from google.cloud import storage
 from datetime import timedelta
 from google.oauth2 import service_account
@@ -23,7 +24,6 @@ def generate_signed_url(blob_name):
         print(f"Error generating signed URL for {blob_name}: {e}")  # Debugging
         return None
 
-st.set_page_config(page_title="MultiClassClassificationInput App", layout="wide")
 st.logo(generate_signed_url("pvz.gif"), size="large")
 pages = [
     st.Page("Pages/Home_Page.py", title="Home",icon="🏠"),

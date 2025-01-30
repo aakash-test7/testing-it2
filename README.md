@@ -1,7 +1,7 @@
 # Multi-Class Classification App Architecture
 
 ## Files
-- **app.py**
+- **app2.py**
   - Main Streamlit application file.
   - Handles UI, navigation, and user interactions.
 - **backend.py**

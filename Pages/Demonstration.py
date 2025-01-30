@@ -2,7 +2,6 @@ import streamlit as st
 from app2 import generate_signed_url
 
 def demonstration_page():
-    st.set_page_config(page_title="MultiClassClassificationInput App", layout="wide")
     st.title("Demonstration Page")
     st.write("**Learn how to use this interface**")
     st.write("This page helps you understand how to use the app through video tutorials. Follow the steps below:")

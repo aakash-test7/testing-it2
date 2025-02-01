@@ -346,6 +346,12 @@ def user_input_menu(tid):
             st.subheader("Model Prediction")
             resultant_value = combined_data[combined_data['Transcript id'] == tid]['Resultant'].values[0]
             st.write(f"Stage/Tissue Group Concerned {tid}: {resultant_value}\n")
+            unique_resultant_values = []
+            tissues = resultant_value.split(", ")
+            for tissue in tissues:
+                if tissue not in unique_resultant_values:
+                        unique_resultant_values.append(tissue)
+            perf_chart(unique_resultant_values)
         else:
             st.subheader("Model Prediction")
             st.write("Expression Status : normal  ( no particular tissue/stage favoured ) 0 \n")
@@ -361,12 +367,19 @@ def multi_user_input_menu(mtid):
                 mtid_list= [mtid.strip()]
         mtid_list.sort()        
         st.subheader("Model Prediction")
+        unique_resultant_values = []
         for tid in mtid_list:
             if tid in combined_data['Transcript id'].values:
                 resultant_value = combined_data[combined_data['Transcript id'] == tid]['Resultant'].values[0]
                 st.write(f"{tid} Stage/Tissue Group Concerned: {resultant_value}\n")
+                tissues = resultant_value.split(", ")
+                for tissue in tissues:
+                    if tissue not in unique_resultant_values:
+                        unique_resultant_values.append(tissue)
             else:
                 st.write(f"{tid} Expression Status : normal  ( no particular tissue/stage favoured ) 0 \n")
+        if unique_resultant_values:
+            perf_chart(unique_resultant_values)
 
 def multi_transcriptid_info(mtid):
     mtid_list = [tid.strip() for tid in mtid.replace(",", " ").split()]
@@ -578,3 +591,31 @@ def process_mlocid(mlocid):
             transcript_ids.append(transcript_id)
     result=",".join(transcript_ids)
     return result
+
+def col(selected_tissue):
+    if selected_tissue == "ST":
+        return "#5E5E5E"
+    elif selected_tissue == "GT":
+        return "#54AE32"
+    elif selected_tissue == "RT":
+        return "#F9DB57"
+    elif selected_tissue == "FDS":
+        return "#C23175"
+    elif selected_tissue == "FP":
+        return "#3274B5"
+
+def perf_chart(selected_tissues):
+    data = {"Tissue/Stages/File": ["ST", "GT", "RT", "FDS", "FP"],
+        "Training Accuracy": [0.956180239768499, 0.959487391484084, 0.939024390243902, 0.957833815626292, 0.949359239355106],
+        "Test Accuracy": [0.946280991735537, 0.954545454545455, 0.943801652892562, 0.952892561983471, 0.947107438016529],
+        "Grid Search": [0.961346970694061, 0.960729486270052, 0.952463100498261, 0.966723572093977, 0.95845419504816],
+        "Random Search": [0.964241455639406, 0.963416291332997, 0.956182322425154, 0.967137649884195, 0.957214311964241]}
+    df = pd.DataFrame(data)
+    df.set_index("Tissue/Stages/File", inplace=True)
+    filtered_df = df.loc[selected_tissues]
+    if len(selected_tissues) == 1:
+        clr = col(selected_tissues[0])
+        st.bar_chart(filtered_df.T, height=400, color=clr,x_label='Metrics', y_label='Accuracy/Score')
+    else:
+        colors = [col(tissue) for tissue in selected_tissues]
+        st.bar_chart(filtered_df.T, height=400, color=colors,stack=False,x_label='Metrics', y_label='Accuracy/Score')

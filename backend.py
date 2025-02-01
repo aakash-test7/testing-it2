@@ -55,6 +55,7 @@ protein_df = read_excel_from_gcs(bucket_name, "Data/9.xlsx")
 combined_data = read_excel_from_gcs(bucket_name, "Data/7.xlsx")
 GO_df = read_excel_from_gcs(bucket_name, "Data/10.xlsx")
 cello_df = read_excel_from_gcs(bucket_name, "Data/13.xlsx")
+tsi_df=read_excel_from_gcs(bucket_name, "Data/12.xlsx")
 
 """ additional local downlaod
 def read_text_from_gcs(bucket_name, blob_name):
@@ -685,8 +686,7 @@ def svm_charts():
     return
 
 def tsi_plot():
-    file_path = '/Users/aakash27/Desktop/ML Models/MultiClassClassification/Final/12.xlsx'
-    df = pd.read_excel(file_path)
+    df = tsi_df
     st.title("Tissue Specificity Index (TSI) Analysis")
     con=st.container(border=True)
     with con:

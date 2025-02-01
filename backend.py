@@ -619,3 +619,106 @@ def perf_chart(selected_tissues):
     else:
         colors = [col(tissue) for tissue in selected_tissues]
         st.bar_chart(filtered_df.T, height=400, color=colors,stack=False,x_label='Metrics', y_label='Accuracy/Score')
+
+def svm_charts():
+    data = {"Tissue/Stages/File": ["Seed Tissues", "Green Tissues", "Root Tissues", "Flower Development Stages", "Flower Parts"],
+        "Training Accuracy": [0.956180239768499, 0.959487391484084, 0.939024390243902, 0.957833815626292, 0.949359239355106],
+        "Test Accuracy": [0.946280991735537, 0.954545454545455, 0.943801652892562, 0.952892561983471, 0.947107438016529],
+        "Grid Search": [0.961346970694061, 0.960729486270052, 0.952463100498261, 0.966723572093977, 0.95845419504816],
+        "Random Search": [0.964241455639406, 0.963416291332997, 0.956182322425154, 0.967137649884195, 0.957214311964241]}
+
+    df = pd.DataFrame(data)
+    df.set_index("Tissue/Stages/File", inplace=True)
+
+    st.title("Model Performance Analysis")
+    con9=st.container(border=True)
+    with con9:
+        col1,col2,col3=st.columns([1,2,1])
+        with col2:
+            con=st.container(border=True)
+            con.subheader("Dataset")
+            con.dataframe(df)
+
+        col1,col2=st.columns(2)
+        with col1:
+            container = st.container(border=True)
+            container.subheader("Training Accuracy")
+            container.bar_chart(df["Training Accuracy"],x_label='Tissue/Stages/File',y_label='Accuracy')
+
+            # Bar chart for Test Accuracy
+            container=st.container(border=True)
+            container.subheader("Test Accuracy")
+            container.bar_chart(df["Test Accuracy"],x_label='Tissue/Stages/File',y_label='Accuracy',color='#AFDC8F')
+
+        with col2:
+            container=st.container(border=True)
+            container.subheader("Grid Search")
+            container.bar_chart(df["Grid Search"],x_label='Tissue/Stages/File',y_label='Score',color='#FF6347')
+
+            container=st.container(border=True)
+            container.subheader("Random Search")
+            container.bar_chart(df["Random Search"],x_label='Tissue/Stages/File',y_label='Score',color='#FFD700')
+
+    model_data = {"Algorithm": ["linear", "rbf", "poly_deg1", "poly_deg2", "poly_deg3"],
+        "Train Accuracy": [0.8444966831970117, 0.9776840342628969, 0.8444966831970117, 0.9753332903973723, 0.896470664004637],
+        "Test Accuracy": [0.8429933024214322, 0.9774600721277692, 0.8429933024214322, 0.9774600721277692, 0.8952859350850078]}
+
+    m_df = pd.DataFrame(model_data)
+    m_df.set_index("Algorithm", inplace=True)
+
+    container=st.container(border=True)
+    with container:
+        col1,col2=st.columns([1,2])
+        with col1:
+            container=st.container(border=True,height=630)
+            container.subheader("Dataset")
+            container.dataframe(m_df,use_container_width=True)
+            container.expander("Linear",expanded=False).write("Support Vector Machine with a Linear Kernel (SVM Linear) \nDescription: A linear kernel is used when the data is linearly separable. The model tries to find the best hyperplane that separates the classes")
+            container.expander("RBF",expanded=False).write("Support Vector Machine with a Radial Basis Function Kernel (SVM RBF) \nDescription: The Radial Basis Function kernel is used when the data is not linearly separable. It is used to map the data into a higher-dimensional space where it can be linearly separable.")
+            container.expander("Poly_deg1",expanded=False).write("Support Vector Machine with a Polynomial Kernel of Degree 1 (SVM Poly Degree 1) \nDescription: This is a polynomial kernel with degree 1, which is essentially a linear kernel. In this case, the polynomial kernel behaves the same as the linear kernel.")
+            container.expander("Poly_deg2",expanded=False).write("Support Vector Machine with a Polynomial Kernel of Degree 2 (SVM Poly Degree 2) \nDescription: The polynomial kernel of degree 2 allows the decision boundary to be a quadratic function, which can be useful for separating classes in a non-linear way.")
+            container.expander("Poly_deg3",expanded=False).write("Support Vector Machine with a Polynomial Kernel of Degree 3 (SVM Poly Degree 3) \nDescription: The polynomial kernel of degree 3 allows for more flexibility in modeling complex, non-linear decision boundaries by fitting cubic curves to separate the data.")
+        with col2:
+            container=st.container(border=True,height=630)
+            container.subheader("Model Performance")
+            container.bar_chart(m_df,stack=False,x_label='Algorithms',y_label='Accuracy',color=['#AFDC8F','#FF6347'],height=530)
+    return
+
+def tsi_plot():
+    file_path = '/Users/aakash27/Desktop/ML Models/MultiClassClassification/Final/12.xlsx'
+    df = pd.read_excel(file_path)
+    st.title("Tissue Specificity Index (TSI) Analysis")
+    con=st.container(border=True)
+    with con:
+        con=st.container(border=True)
+        col1,col2=st.columns([10,9])
+        with col1:
+            con=st.container(border=True,height=500)
+            df['Category'] = 'non-TF'
+            df.loc[df['TF family'].notna(), 'Category'] = 'TF'
+            df.loc[df['lncRNA'].notna(), 'Category'] = 'lncRNA'
+            df['TSI value (%)'] = df['TSI value'] * 100
+            con.subheader("Dataset")
+            con.dataframe(df)
+        with col2:
+            con=st.container(border=True,height=500)
+            con.subheader("Percentage Presence of lncRNA, TF, and non-TF")
+            category_counts = df['Category'].value_counts(normalize=True) * 100
+            category_counts = category_counts[['non-TF', 'lncRNA', 'TF']]
+            con.bar_chart(category_counts,color=['#AFDC8F'],y_label='Percentage (%)',x_label='Category',height=360)
+
+        con=st.container(border=True)
+        con.subheader("TSI Value by Tissue Type")
+        tsi_by_tissue = df.groupby('TSI tissue')['TSI value (%)'].mean().reset_index()
+        con.bar_chart(tsi_by_tissue.set_index('TSI tissue'),color='#FF6347',y_label='TSI value (%)',x_label='Tissue Type')
+        con=st.container(border=True)
+
+        con.subheader("Tissue-Specific Distribution of lncRNA, TF, and non-TF")
+        category_counts_by_tissue = df.groupby(['TSI tissue', 'Category']).size().unstack(fill_value=0)
+        category_percentages = category_counts_by_tissue.div(category_counts_by_tissue.sum(axis=1), axis=0) * 100
+
+        custom_order = ['GS', 'S', 'R', 'Rtip', 'RH', 'YL', 'ML', 'Brac', 'SAM', 'FB1', 'FB2', 'FB3', 'FB4', 'FL1', 'FL2', 'FL3', 'FL4', 'FL5', 'Cal', 'Cor', 'And', 'Gyn', 'Pedi', 'PodSh', 'SdCt', 'Emb', 'Endo', '5 DAP', '10 DAP', '20  DAP', '30  DAP', 'Nod']
+        category_percentages = category_percentages.reindex(custom_order)
+        category_percentages = category_percentages[['non-TF', 'TF', 'lncRNA']]
+        con.bar_chart(category_percentages,y_label='TSI tissue',x_label='Percentage (%)',color=['#FF6347','#FFD700','#0066CC'],height=500,width=700)
+    return

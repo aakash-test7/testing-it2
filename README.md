@@ -52,10 +52,18 @@
 - **multi_transcriptid_info(mtid)**
   - Displays information for multiple Gene IDs.
 - **process_locid(locid)**
-  - Connects NCBI ID with Gene ID
+  - Connects NCBI ID with Gene ID.
 - **process_mlocid(mlocid)**
-  - Connect multiple NCBI IDs with corresponding Gene IDs
-  
+  - Connect multiple NCBI IDs with corresponding Gene IDs.
+- **Col(selected_tissue)**
+  - Changes color depending on Model results.
+- **perf_chart(selected_tissues)**
+  - Performance charts for Model prediction results.
+- **svm_charts()**
+  - Plot performance charts for SVM kernels.
+- **tsi_plot()**
+  - Plot TSI values and related charts from data.
+    
 ## Requirements (requirements.txt)
 - **pandas**
 - **numpy**
@@ -80,6 +88,8 @@
   - Contains combined data.
 - **10.xlsx**
   - Contains GO and KEGG data.
+- **12.xlsx**
+  - Contains TSI data. 
 - **13.xlsx**
   - Contains cellular localization data.
 - **14.txt**
@@ -115,6 +125,7 @@
   - Protein data (9.xlsx)
   - Combined data (7.xlsx)
   - GO and KEGG data (10.xlsx)
+  - TSI data (12.xlsx)
   - Cellular localization data (13.xlsx)
   - Orthologs data (14.txt)
   - Paralogs data (15.txt)

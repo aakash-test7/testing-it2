@@ -1,9 +1,11 @@
 import streamlit as st
-from backend import generate_signed_url
+from backend import generate_signed_url, svm_charts, tsi_plot
 
 def meta_data_page():
     st.title("Meta Data")
     st.write("**Key Insights and Analytics from the Application Backend**")
+    svm_charts()
+    tsi_plot()
     col1, col2 = st.columns([1, 2])
     with col1:
         st.image(generate_signed_url("Images/1.png"), caption="Expression Data Heatmap", use_container_width=True)
